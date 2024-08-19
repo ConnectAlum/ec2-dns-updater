@@ -1,12 +1,12 @@
 # EC2 DNS Updater
 
-This is a AWS lambda function that will update the DNS records for a given subdomain (defined in the `Subdomain` tag on an EC2 server) to point to the public IP address of an EC2 instance.
+This AWS lambda function will update the DNS records for a given subdomain (defined in the `Subdomain` tag on an EC2 server) to point to the public IP address of an EC2 instance.
 
 ## Setup
 1. Create a AWS lambda function
 2. Set the runtime to `Node.js 20.x`
 3. Set the env variables `CF_ZONE_ID` and `CLOUDFLARE_API_TOKEN`
-4. Create a EventBridge rule that triggers the lambda function on EC2 instance state change (see below)
+4. Create an EventBridge rule that triggers the lambda function on EC2 instance state change (see below)
 5. Run `pnpm install` on this repo to install the dependencies
 6. run `pnpm build` to build the lambda function
 7. Run `pnpm deploy` to deploy the lambda function to AWS (assuming your lambda function is named `DNS_Updater`. Make sure you are logged into the `aws` CLI.)
