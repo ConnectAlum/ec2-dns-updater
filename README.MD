@@ -9,7 +9,7 @@ This is a AWS lambda function that will update the DNS records for a given subdo
 4. Create a EventBridge rule that triggers the lambda function on EC2 instance state change (see below)
 5. Run `pnpm install` on this repo to install the dependencies
 6. run `pnpm build` to build the lambda function
-7. Run `pnpm deploy` to deploy the lambda function to AWS (assuming your lambda function is named `DNS_Updater`)
+7. Run `pnpm deploy` to deploy the lambda function to AWS (assuming your lambda function is named `DNS_Updater`. Make sure you are logged into the `aws` CLI.)
 
 
 ## EventBridge Rule
