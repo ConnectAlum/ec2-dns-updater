@@ -41,7 +41,11 @@ export const handler: Handler = async (event, context) => {
                     return;
                 }
                 if (subdomain) {
-                    await upsertDNSRecord(subdomain, instance.PublicIpAddress, instanceId);
+                    const subDomains = subdomain.split(",");
+                    for (const subdomain of subDomains) {
+                        console.log(`Upserting DNS record for ${subdomain} -> ${instance.PublicIpAddress}`);
+                        await upsertDNSRecord(subdomain.trim(), instance.PublicIpAddress, instanceId);
+                    }
                 }
             }
         } else {
