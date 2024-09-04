@@ -33,6 +33,11 @@ export const upsertDNSRecord = async (subDef: string, ip: string, ec2Id: string)
       return;
     }
     sub = subdomain;
+  } else if (zoneIdDef.includes(":")) { // choose the first as the default zone
+    const [defaultZoneId] = zoneIdDef.split(",");
+    zoneId = defaultZoneId;
+    sub = subDef;
+    console.warn(`Zone ID is not specified for tag, using default zone ID ${zoneId}`);
   }
   console.log(`Upserting DNS record for ${sub} with IP ${ip} (for zone ${zoneId})`);
   const zone = await cloudflare.zones.get({ zone_id: zoneId });
