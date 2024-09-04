@@ -2,13 +2,39 @@ import Cloudflare from "cloudflare";
 
 const cloudflare = new Cloudflare()
 
-export const upsertDNSRecord = async (sub: string, ip: string, ec2Id: string) => {
-  console.log(`Upserting DNS record for ${sub} with IP ${ip}`);
-  const zoneId = process.env.CF_ZONE_ID;
-  if (!zoneId) {
+export const upsertDNSRecord = async (subDef: string, ip: string, ec2Id: string) => {
+  const zoneIdDef = process.env.CF_ZONE_ID;
+  if (!zoneIdDef) {
     console.error("CF_ZONE_ID is not set!");
     return;
   }
+  let zoneId = zoneIdDef;
+  let sub = subDef;
+  if (sub.includes(":") && zoneIdDef.includes(":")) {
+    // tag:subdomain -> tag diffrentiates between different domains
+    const [tag, subdomain] = sub.split(":");
+    if (!tag || !subdomain) {
+      console.error("Invalid subdomain format, expected tag:subdomain");
+      return;
+    }
+    // get the corresponding zone id: tag:zoneId,tag2:zoneId2
+    const zoneIdMap = zoneIdDef.split(",");
+    let found = false;
+    for (const entry of zoneIdMap) {
+      const [tagEntry, zoneIdEntry] = entry.split(":");
+      if (tagEntry === tag) {
+        zoneId = zoneIdEntry;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      console.error(`Zone ID not found for tag ${tag}`);
+      return;
+    }
+    sub = subdomain;
+  }
+  console.log(`Upserting DNS record for ${sub} with IP ${ip} (for zone ${zoneId})`);
   const zone = await cloudflare.zones.get({ zone_id: zoneId });
   if (!zone) {
     console.error("Zone not found");
